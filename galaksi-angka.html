@@ -106,7 +106,7 @@
                 const t = Math.floor(Math.random() * 3);
                 if (t === 0) { a = Math.floor(Math.random() * 12) + 2; op = '²'; ans = a * a; }
                 else if (t === 1) { ans = Math.floor(Math.random() * 12) + 2; a = ans * ans; op = '√'; }
-                else { a = Math.floor(Math.random() * 15) + 1; ans = Math.floor(Math.random() * 15) + 1; let sum = a + ans; op = `x + ${a} = ${sum}. x?`; a = ''; b = ''; }
+                else { a = Math.floor(Math.random() * 15) + 1; ans = Math.floor(Math.random() * 15) + 1; let sum = a + ans; op = "x + " + a + " = " + sum + ". x?"; a = ''; b = ''; }
             }
             options = [ans];
             while (options.length < 3) {
@@ -115,7 +115,7 @@
                 if (!options.includes(w)) options.push(w);
             }
             options.sort(() => Math.random() - 0.5);
-            let text = (grade === 'SMA') ? (op === '√' ? `√${a}` : (op === '²' ? `${a}²` : op)) : (a + ' ' + op + ' ' + b);
+            let text = (grade === 'SMA') ? (op === '√' ? "√" + a : (op === '²' ? a + "²" : op)) : (a + ' ' + op + ' ' + b);
             return { text, ans, options };
         }
         function setGrade(g) { grade = g; hiEl.innerText = localStorage.getItem('hiScore_' + grade) || 0; document.getElementById('screen-start').classList.add('hidden'); startGame(); }
