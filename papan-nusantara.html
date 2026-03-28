@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAPAN NUSANTARA - APeL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --batik-brown: #6D4C1F;
+            --sky-blue: #87CEEB;
+            --white: #ffffff;
+            --black: #000000;
+            --red: #FF4D4D;
+            --blue: #4D79FF;
+            --border: 4px solid #000000;
+            --shadow: 6px 6px 0px #000000;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--sky-blue);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* Batik Background Pattern */
+        .batik-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(var(--batik-brown) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h1 {
+            font-family: 'Lobster', cursive;
+            font-size: 3rem;
+            color: var(--batik-brown);
+            text-shadow: 3px 3px 0px #fff;
+            -webkit-text-stroke: 1px var(--black);
+            margin-bottom: 10px;
+        }
+
+        .back-btn {
+            background: var(--white);
+            border: var(--border);
+            padding: 8px 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 4px 4px 0px var(--black);
+            text-decoration: none;
+            color: var(--black);
+            display: inline-block;
+            margin-bottom: 10px;
+            transition: 0.1s;
+        }
+
+        .back-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px var(--black); }
+
+        #game-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        /* Board Styling */
+        .board-wrapper {
+            position: relative;
+            background: var(--white);
+            border: var(--border);
+            box-shadow: var(--shadow);
+            padding: 10px;
+        }
+
+        canvas {
+            background: #fdf5e6;
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* UI Controls */
+        .controls {
+            flex: 1;
+            min-width: 300px;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--white);
+            border: var(--border);
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .player-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .p-box {
+            padding: 10px;
+            border: var(--border);
+            width: 45%;
+            text-align: center;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .p-box.active {
+            transform: scale(1.1);
+            background: yellow;
+        }
+
+        #dice-area {
+            text-align: center;
+        }
+
+        .dice {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border: var(--border);
+            margin: 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            box-shadow: 6px 6px 0px var(--black);
+            cursor: pointer;
+            transition: 0.1s;
+        }
+
+        .dice:active { transform: scale(0.9); }
+
+        .dice.rolling { animation: shake 0.2s infinite; }
+
+        @keyframes shake {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        /* Trivia Modal */
+        #modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border: var(--border);
+            box-shadow: 10px 10px 0px var(--black);
+            max-width: 500px;
+            width: 100%;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .btn {
+            background: var(--sky-blue);
+            border: var(--border);
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 4px 4px 0px var(--black);
+            margin: 10px;
+            display: block;
+            width: 100%;
+        }
+
+        .btn:hover { background: #6fbada; }
+
+        .btn-opt {
+            text-align: left;
+            margin-bottom: 10px;
+        }
+
+        #log {
+            font-size: 0.9rem;
+            color: #333;
+            max-height: 100px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .controls { min-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="batik-bg"></div>
+
+    <header>
+        <a href="https://apel-pembelajaran.vercel.app" class="back-btn">← KEMBALI</a>
+        <h1>Papan Nusantara</h1>
+    </header>
+
+    <div id="game-container">
+        <div class="board-wrapper">
+            <canvas id="gameCanvas" width="600" height="600"></canvas>
+        </div>
+
+        <div class="controls">
+            <div class="card player-info">
+                <div id="p1-card" class="p-box active" style="border-color: var(--red);">PEMAIN 1 (MERAH)</div>
+                <div id="p2-card" class="p-box" style="border-color: var(--blue);">PEMAIN 2 (BIRU)</div>
+            </div>
+
+            <div class="card" id="dice-area">
+                <p>GILIRAN: <span id="current-player-text">MERAH</span></p>
+                <div id="dice" class="dice">?</div>
+                <button class="btn" id="roll-btn">LEMPAR DADU</button>
+            </div>
+
+            <div class="card">
+                <strong>STATUS PERMAINAN:</strong>
+                <div id="log">Selamat datang di Papan Nusantara! Silakan lempar dadu untuk memulai.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Trivia -->
+    <div id="modal">
+        <div class="modal-content" id="modal-inner">
+            <!-- Content via JS -->
+        </div>
+    </div>
+
+    <script>
+        // Audio Synthesis (No external files needed)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(freq, type, duration) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        const sound = {
+            roll: () => playSound(440, 'square', 0.1),
+            ladder: () => { playSound(523, 'sine', 0.2); setTimeout(() => playSound(659, 'sine', 0.2), 100); },
+            snake: () => { playSound(300, 'sawtooth', 0.2); setTimeout(() => playSound(200, 'sawtooth', 0.2), 100); },
+            win: () => { [523, 659, 783, 1046].forEach((f, i) => setTimeout(() => playSound(f, 'sine', 0.4), i * 150)); }
+        };
+
+        // Configuration
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const size = 10;
+        const tileSize = canvas.width / size;
+
+        let players = [
+            { id: 1, pos: 1, color: '#FF4D4D', visualPos: 1 },
+            { id: 2, pos: 1, color: '#4D79FF', visualPos: 1 }
+        ];
+        let currentPlayer = 0;
+        let isMoving = false;
+
+        const snakes = { 17: 7, 52: 29, 62: 19, 95: 75, 98: 79 };
+        const ladders = { 3: 21, 8: 30, 28: 84, 58: 77, 75: 86, 80: 100 };
+        const triviaSpots = [15, 35, 55, 72, 88];
+
+        const questions = [
+            { q: "Apa nama rumah adat dari Sumatera Barat?", a: ["Rumah Gadang", "Rumah Joglo", "Rumah Honai"], c: 0 },
+            { q: "Senjata tradisional khas suku Dayak adalah...", a: ["Keris", "Mandau", "Kujang"], c: 1 },
+            { q: "Tari Kecak berasal dari provinsi...", a: ["Jawa Timur", "Bali", "Papua"], c: 1 },
+            { q: "Lagu daerah 'Apuse' berasal dari daerah...", a: ["Aceh", "Papua", "Maluku"], c: 1 },
+            { q: "Candi Borobudur terletak di provinsi...", a: ["DI Yogyakarta", "Jawa Tengah", "Jawa Barat"], c: 1 }
+        ];
+
+        // Draw Logic
+        function getCoords(pos) {
+            let index = pos - 1;
+            let row = Math.floor(index / 10);
+            let col = index % 10;
+            if (row % 2 !== 0) col = 9 - col;
+            return {
+                x: col * tileSize + tileSize / 2,
+                y: (9 - row) * tileSize + tileSize / 2
+            };
+        }
+
+        function drawBoard() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Tiles
+            for (let i = 0; i < 100; i++) {
+                let row = Math.floor(i / 10);
+                let col = i % 10;
+                let displayCol = (row % 2 === 0) ? col : 9 - col;
+                let x = displayCol * tileSize;
+                let y = (9 - row) * tileSize;
+                let num = i + 1;
+
+                // Batik style background
+                ctx.fillStyle = (i % 2 === 0) ? "#fdf5e6" : "#faebd7";
+                ctx.fillRect(x, y, tileSize, tileSize);
+                
+                // Border
+                ctx.strokeStyle = "#000";
+                ctx.lineWidth = 1;
+                ctx.strokeRect(x, y, tileSize, tileSize);
+
+                // Highlight Special
+                if (triviaSpots.includes(num)) {
+                    ctx.fillStyle = "rgba(255, 215, 0, 0.3)";
+                    ctx.fillRect(x, y, tileSize, tileSize);
+                    ctx.fillStyle = "#000";
+                    ctx.font = "bold 10px Arial";
+                    ctx.fillText("TRIVIA", x + 5, y + 15);
+                }
+
+                ctx.fillStyle = "rgba(109, 76, 31, 0.2)";
+                ctx.font = "bold 14px Arial";
+                ctx.fillText(num, x + 5, y + tileSize - 5);
+            }
+
+            // Draw Snakes and Ladders
+            ctx.lineWidth = 6;
+            ctx.lineCap = "round";
+
+            // Ladders (Green)
+            Object.keys(ladders).forEach(start => {
+                let from = getCoords(parseInt(start));
+                let to = getCoords(ladders[start]);
+                ctx.strokeStyle = "#2ecc71";
+                drawArrow(from.x, from.y, to.x, to.y);
+            });
+
+            // Snakes (Red)
+            Object.keys(snakes).forEach(start => {
+                let from = getCoords(parseInt(start));
+                let to = getCoords(snakes[start]);
+                ctx.strokeStyle = "#e74c3c";
+                drawArrow(from.x, from.y, to.x, to.y);
+            });
+
+            // Draw Players
+            players.forEach((p, idx) => {
+                let pos = getCoords(p.visualPos);
+                ctx.beginPath();
+                ctx.arc(pos.x + (idx * 5 - 5), pos.y, 15, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.fill();
+                ctx.strokeStyle = "#000";
+                ctx.lineWidth = 3;
+                ctx.stroke();
+            });
+        }
+
+        function drawArrow(fromx, fromy, tox, toy) {
+            ctx.beginPath();
+            ctx.moveTo(fromx, fromy);
+            ctx.lineTo(tox, toy);
+            ctx.stroke();
+        }
+
+        // Game Logic
+        async function movePlayer(playerIdx, targetPos) {
+            isMoving = true;
+            let p = players[playerIdx];
+            
+            // Step-by-step movement
+            while (p.visualPos !== targetPos) {
+                if (p.visualPos < targetPos) p.visualPos++;
+                else p.visualPos--;
+                
+                drawBoard();
+                await new Promise(r => setTimeout(r, 200));
+            }
+
+            p.pos = targetPos;
+            isMoving = false;
+        }
+
+        async function handleTurn() {
+            if (isMoving) return;
+            
+            const btn = document.getElementById('roll-btn');
+            const diceDiv = document.getElementById('dice');
+            btn.disabled = true;
+            
+            // Roll Animation
+            sound.roll();
+            diceDiv.classList.add('rolling');
+            let roll = 0;
+            for(let i=0; i<10; i++) {
+                roll = Math.floor(Math.random() * 6) + 1;
+                diceDiv.textContent = roll;
+                await new Promise(r => setTimeout(r, 50));
+            }
+            diceDiv.classList.remove('rolling');
+
+            let p = players[currentPlayer];
+            let newPos = p.pos + roll;
+
+            if (newPos > 100) {
+                log(`Pemain ${currentPlayer + 1} butuh angka ${100 - p.pos} untuk menang.`);
+            } else {
+                await movePlayer(currentPlayer, newPos);
+                
+                // Check Special Tiles
+                if (ladders[p.pos]) {
+                    log(`MANTAP! Naik tangga ke ${ladders[p.pos]}`);
+                    sound.ladder();
+                    await movePlayer(currentPlayer, ladders[p.pos]);
+                } else if (snakes[p.pos]) {
+                    log(`WADUH! Turun ular ke ${snakes[p.pos]}`);
+                    sound.snake();
+                    await movePlayer(currentPlayer, snakes[p.pos]);
+                } else if (triviaSpots.includes(p.pos)) {
+                    await showTrivia();
+                }
+            }
+
+            if (p.pos === 100) {
+                sound.win();
+                alert(`SELAMAT! Pemain ${currentPlayer + 1} Menang!`);
+                location.reload();
+                return;
+            }
+
+            // Switch turn
+            currentPlayer = currentPlayer === 0 ? 1 : 0;
+            updateUI();
+            btn.disabled = false;
+        }
+
+        function updateUI() {
+            document.getElementById('p1-card').classList.toggle('active', currentPlayer === 0);
+            document.getElementById('p2-card').classList.toggle('active', currentPlayer === 1);
+            document.getElementById('current-player-text').textContent = currentPlayer === 0 ? "MERAH" : "BIRU";
+            document.getElementById('current-player-text').style.color = players[currentPlayer].color;
+        }
+
+        function log(msg) {
+            const l = document.getElementById('log');
+            l.innerHTML = `> ${msg}<br>${l.innerHTML}`;
+        }
+
+        // Trivia Logic
+        function showTrivia() {
+            return new Promise(resolve => {
+                const modal = document.getElementById('modal');
+                const inner = document.getElementById('modal-inner');
+                const q = questions[Math.floor(Math.random() * questions.length)];
+
+                modal.style.display = 'flex';
+                inner.innerHTML = `<h3>KOTAK TRIVIA!</h3><p style="margin:15px 0">${q.q}</p>`;
+                
+                q.a.forEach((opt, i) => {
+                    const b = document.createElement('button');
+                    b.className = 'btn btn-opt';
+                    b.textContent = `${String.fromCharCode(65+i)}. ${opt}`;
+                    b.onclick = async () => {
+                        modal.style.display = 'none';
+                        if (i === q.c) {
+                            log("BENAR! Maju 3 langkah.");
+                            await movePlayer(currentPlayer, Math.min(100, players[currentPlayer].pos + 3));
+                        } else {
+                            log("SALAH! Mundur 2 langkah.");
+                            await movePlayer(currentPlayer, Math.max(1, players[currentPlayer].pos - 2));
+                        }
+                        resolve();
+                    };
+                    inner.appendChild(b);
+                });
+            });
+        }
+
+        // Init
+        document.getElementById('roll-btn').onclick = handleTurn;
+        drawBoard();
+
+        // Canvas hover effect simulation
+        canvas.onmousemove = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const col = Math.floor(x / (rect.width / 10));
+            const row = 9 - Math.floor(y / (rect.height / 10));
+            // Just for visual feedback we don't redraw everything to keep performance
+        };
+
+    </script>
+</body>
+</html>
