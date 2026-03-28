@@ -1,1 +1,170 @@
-
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GALAKSI ANGKA - Matematika Luar Angkasa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #7C3AED; --secondary: #FBBF24; --dark: #0F172A; --white: #FFFFFF; --danger: #EF4444; --success: #22C55E; --border: 4px solid #000000; --shadow: 6px 6px 0px #000000; }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--dark); color: var(--white); overflow: hidden; height: 100vh; display: flex; flex-direction: column; align-items: center; }
+        .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 100%); }
+        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: move linear infinite; }
+        @keyframes move { from { transform: translateY(-10vh); } to { transform: translateY(110vh); } }
+        header { width: 100%; max-width: 500px; padding: 15px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
+        .stats-box { background: var(--white); color: black; padding: 5px 12px; border: 3px solid black; box-shadow: 3px 3px 0px black; font-size: 0.9rem; font-weight: 800; }
+        .lives { font-size: 1.2rem; }
+        #game-container { width: 100%; max-width: 500px; flex: 1; position: relative; overflow: hidden; }
+        canvas { display: block; width: 100%; height: 100%; }
+        .overlay { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; z-index: 100; }
+        .hidden { display: none !important; }
+        h1 { font-family: 'Orbitron', sans-serif; font-size: 2.5rem; color: var(--secondary); margin-bottom: 20px; -webkit-text-stroke: 1px black; }
+        .btn { width: 100%; max-width: 280px; padding: 15px; margin: 10px 0; font-size: 1.2rem; font-weight: 800; border: var(--border); box-shadow: var(--shadow); cursor: pointer; transition: 0.1s; font-family: 'Poppins', sans-serif; }
+        .btn:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0px black; }
+        .btn-purple { background: var(--primary); color: white; }
+        .btn-yellow { background: var(--secondary); color: black; }
+        .btn-outline { background: white; color: black; }
+        #controls { width: 100%; max-width: 500px; padding: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; background: rgba(0, 0, 0, 0.5); border-top: var(--border); }
+        .ans-btn { padding: 15px 5px; font-size: 1.4rem; font-weight: 800; border: var(--border); box-shadow: 4px 4px 0px black; background: white; color: black; cursor: pointer; }
+        .ans-btn.correct { background: var(--success) !important; color: white; }
+        .ans-btn.wrong { background: var(--danger) !important; color: white; }
+        .final-score-text { font-size: 3rem; color: var(--secondary); font-weight: 800; }
+        .stars-rating { font-size: 2.5rem; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="stars" id="star-field"></div>
+    <header>
+        <div class="stats-box">SKOR: <span id="score-val">0</span></div>
+        <div class="lives" id="lives-val">❤️❤️❤️</div>
+        <div class="stats-box">HI: <span id="hi-val">0</span></div>
+    </header>
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+        <div id="screen-start" class="overlay">
+            <h1>GALAKSI ANGKA</h1>
+            <p style="margin-bottom: 20px;">Pilih Jenjang Sekolahmu:</p>
+            <button class="btn btn-yellow" onclick="setGrade('SD')">SD (Tambah/Kurang)</button>
+            <button class="btn btn-purple" onclick="setGrade('SMP')">SMP (Kali/Bagi)</button>
+            <button class="btn btn-outline" onclick="setGrade('SMA')">SMA (Akar/Pangkat)</button>
+            <a href="/#games" style="color:white; margin-top:20px; font-size: 0.8rem; text-decoration:none;">⬅ Kembali ke Portal 🍎</a>
+        </div>
+        <div id="screen-result" class="overlay hidden">
+            <h1 id="res-title">GAME OVER</h1>
+            <div class="stars-rating" id="res-stars">⭐⭐⭐</div>
+            <p>Skor Akhir:</p>
+            <div class="final-score-text" id="res-score">0</div>
+            <p id="res-msg" style="margin-bottom: 20px;">Hebat! Terus berlatih ya!</p>
+            <button class="btn btn-yellow" onclick="startGame()">MAIN LAGI</button>
+            <button class="btn btn-purple" onclick="showMenu()">GANTI JENJANG</button>
+        </div>
+    </div>
+    <div id="controls">
+        <button class="ans-btn" onclick="handleAnswer(0)">?</button>
+        <button class="ans-btn" onclick="handleAnswer(1)">?</button>
+        <button class="ans-btn" onclick="handleAnswer(2)">?</button>
+    </div>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score-val');
+        const hiEl = document.getElementById('hi-val');
+        const livesEl = document.getElementById('lives-val');
+        const ansBtns = document.querySelectorAll('.ans-btn');
+        let grade = 'SD'; let score = 0; let lives = 3; let gameActive = false; let currentProblem = null;
+        let meteor = { y: -100, x: 0, speed: 1.5 }; let timer = 10; let timerInterval; let animationId;
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playBeep(freq, duration, type = 'sine') {
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime); osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + duration);
+        }
+        function createStars() {
+            const field = document.getElementById('star-field');
+            for (let i = 0; i < 50; i++) {
+                const s = document.createElement('div'); s.className = 'star';
+                s.style.width = s.style.height = (Math.random() * 3) + 'px';
+                s.style.left = Math.random() * 100 + '%';
+                s.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                s.style.animationDelay = Math.random() * 5 + 's';
+                field.appendChild(s);
+            }
+        }
+        createStars();
+        function resize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
+        window.addEventListener('resize', resize); resize();
+        function generateProblem() {
+            let a, b, op, ans, options = [];
+            if (grade === 'SD') {
+                a = Math.floor(Math.random() * 15) + 5; b = Math.floor(Math.random() * 10) + 1;
+                if (Math.random() > 0.5) { op = '+'; ans = a + b; } else { op = '-'; ans = a - b; }
+            } else if (grade === 'SMP') {
+                const type = Math.floor(Math.random() * 3);
+                if (type === 0) { a = Math.floor(Math.random() * 10) + 2; b = Math.floor(Math.random() * 9) + 2; op = '×'; ans = a * b; }
+                else if (type === 1) { ans = Math.floor(Math.random() * 10) + 2; b = Math.floor(Math.random() * 9) + 2; a = ans * b; op = '÷'; }
+                else { a = Math.floor(Math.random() * 20) - 10; b = Math.floor(Math.random() * 20) - 10; op = '+'; ans = a + b; }
+            } else {
+                const type = Math.floor(Math.random() * 3);
+                if (type === 0) { a = Math.floor(Math.random() * 12) + 2; op = '²'; ans = a * a; }
+                else if (type === 1) { ans = Math.floor(Math.random() * 12) + 2; a = ans * ans; op = '√'; }
+                else { a = Math.floor(Math.random() * 15) + 1; ans = Math.floor(Math.random() * 15) + 1; let b_val = a + ans; op = `x + ${a} = ${b_val}. x?`; a = ''; b = ''; }
+            }
+            options = [ans];
+            while (options.length < 3) {
+                let offset = Math.floor(Math.random() * 5) + 1;
+                let wrong = Math.random() > 0.5 ? ans + offset : ans - offset;
+                if (!options.includes(wrong)) options.push(wrong);
+            }
+            options.sort(() => Math.random() - 0.5);
+            let text = "";
+            if (grade === 'SMA') {
+                if (op === '√') text = `√${a}`; else if (op === '²') text = `${a}²`; else text = op;
+            } else { text = a + ' ' + op + ' ' + b; }
+            return { text, ans, options };
+        }
+        function setGrade(g) { grade = g; hiEl.innerText = localStorage.getItem('hiScore_' + grade) || 0; document.getElementById('screen-start').classList.add('hidden'); startGame(); }
+        function showMenu() { document.getElementById('screen-result').classList.add('hidden'); document.getElementById('screen-start').classList.remove('hidden'); gameActive = false; }
+        function startGame() { score = 0; lives = 3; gameActive = true; document.getElementById('screen-result').classList.add('hidden'); updateUI(); newQuestion(); gameLoop(); }
+        function newQuestion() {
+            currentProblem = generateProblem(); meteor.y = -50; meteor.x = canvas.width / 2;
+            meteor.speed = 1 + (score / 100); timer = 10;
+            ansBtns.forEach((btn, i) => { btn.innerText = currentProblem.options[i]; btn.className = 'ans-btn'; btn.disabled = false; });
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => { if (!gameActive) return; timer -= 0.1; if (timer <= 0) { wrongAnswer(); } }, 100);
+        }
+        function handleAnswer(idx) {
+            if (!gameActive) return;
+            const chosen = currentProblem.options[idx];
+            ansBtns.forEach(btn => btn.disabled = true);
+            if (chosen === currentProblem.ans) { score += 10; ansBtns[idx].classList.add('correct'); playBeep(800, 0.1); setTimeout(newQuestion, 500); }
+            else { ansBtns[idx].classList.add('wrong'); ansBtns.forEach(btn => { if (parseInt(btn.innerText) === currentProblem.ans) btn.classList.add('correct'); }); wrongAnswer(); }
+            updateUI();
+        }
+        function wrongAnswer() { lives--; playBeep(200, 0.3, 'sawtooth'); updateUI(); if (lives <= 0) { endGame(); } else { setTimeout(newQuestion, 1000); } }
+        function updateUI() { scoreEl.innerText = score; livesEl.innerText = '❤️'.repeat(lives); }
+        function endGame() {
+            gameActive = false; clearInterval(timerInterval); playBeep(150, 0.5, 'square');
+            const hiKey = 'hiScore_' + grade; const hi = localStorage.getItem(hiKey) || 0;
+            if (score > hi) localStorage.setItem(hiKey, score);
+            document.getElementById('screen-result').classList.remove('hidden');
+            document.getElementById('res-score').innerText = score;
+            let stars = "⭐"; let msg = "Ayo belajar lagi!";
+            if (score >= 100) { stars = "⭐⭐⭐"; msg = "Luar Biasa! Kamu jenius!"; } else if (score >= 50) { stars = "⭐⭐"; msg = "Hebat! Pertahankan!"; }
+            document.getElementById('res-stars').innerText = stars; document.getElementById('res-msg').innerText = msg;
+        }
+        function gameLoop() {
+            if (!gameActive) return; ctx.clearRect(0, 0, canvas.width, canvas.height);
+            meteor.y += meteor.speed; ctx.save(); ctx.fillStyle = '#4B5563';
+            ctx.beginPath(); ctx.arc(meteor.x, meteor.y, 45, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = 'white'; ctx.lineWidth = 3; ctx.stroke();
+            ctx.fillStyle = 'white'; ctx.font = 'bold 20px Poppins'; ctx.textAlign = 'center'; ctx.fillText(currentProblem.text, meteor.x, meteor.y + 5);
+            const timerWidth = (timer / 10) * 80; ctx.fillStyle = timer < 3 ? 'red' : '#FBBF24';
+            ctx.fillRect(meteor.x - 40, meteor.y + 60, timerWidth, 8); ctx.strokeStyle = 'black'; ctx.strokeRect(meteor.x - 40, meteor.y + 60, 80, 8); ctx.restore();
+            ctx.font = '50px Arial'; ctx.textAlign = 'center'; ctx.fillText('🚀', canvas.width / 2, canvas.height - 30);
+            if (meteor.y > canvas.height - 80) { wrongAnswer(); } else { animationId = requestAnimationFrame(gameLoop); }
+        }
+    </script>
+</body>
+</html>
