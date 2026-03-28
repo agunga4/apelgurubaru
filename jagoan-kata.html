@@ -124,4 +124,331 @@
         .letter-slot {
             display: inline-block;
             border-bottom: 5px solid var(--border);
-            ma
+            margin: 0 5px;
+            min-width: 30px;
+            text-transform: uppercase;
+        }
+
+        .letter-pop {
+            animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        #hint-text {
+            text-align: center;
+            color: #555;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            background: var(--secondary);
+            padding: 5px;
+            border: 2px solid var(--border);
+        }
+
+        /* Virtual Keyboard */
+        #keyboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .key {
+            height: 45px;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        /* Overlay */
+        #overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            color: white;
+            text-align: center;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            text-decoration: none;
+            color: white;
+            background: var(--accent);
+            padding: 5px 15px;
+            border: 2px solid black;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 480px) {
+            #word-container { font-size: 1.8rem; letter-spacing: 5px; }
+            .key { height: 40px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="https://apel-pembelajaran.vercel.app" class="back-btn neu-box">KEMBALI</a>
+
+    <div id="game-container" class="neu-box">
+        <header class="neu-box">
+            <div class="stats-item">
+                <span>SKOR</span>
+                <span id="score-val">0</span>
+            </div>
+            <div class="stats-item">
+                <span>STREAK</span>
+                <span id="streak-val">0</span>
+            </div>
+            <div class="stats-item">
+                <span>WAKTU</span>
+                <span id="timer-val">30</span>
+            </div>
+        </header>
+
+        <div id="hint-text">KATEGORI: -</div>
+
+        <div id="character-display">
+            <!-- Jagoan SVG Parts -->
+            <svg width="200" height="150" viewBox="0 0 200 150">
+                <!-- Part 1: Tanah/Base -->
+                <rect id="part-0" class="hero-part" x="50" y="130" width="100" height="10" fill="#795548" stroke="black" stroke-width="2"/>
+                <!-- Part 2: Badan -->
+                <rect id="part-1" class="hero-part" x="80" y="70" width="40" height="60" fill="#1A237E" stroke="black" stroke-width="2"/>
+                <!-- Part 3: Kepala -->
+                <circle id="part-2" class="hero-part" cx="100" cy="50" r="25" fill="#FFD54F" stroke="black" stroke-width="2"/>
+                <!-- Part 4: Tangan Kiri -->
+                <path id="part-3" class="hero-part" d="M80 80 L50 100" stroke="black" stroke-width="5" stroke-linecap="round"/>
+                <!-- Part 5: Tangan Kanan -->
+                <path id="part-4" class="hero-part" d="M120 80 L150 100" stroke="black" stroke-width="5" stroke-linecap="round"/>
+                <!-- Part 6: Jubah/Hero Item -->
+                <path id="part-5" class="hero-part" d="M75 70 L100 40 L125 70 Z" fill="#FF5252" stroke="black" stroke-width="2"/>
+            </svg>
+        </div>
+
+        <div id="word-container"></div>
+
+        <div id="keyboard"></div>
+    </div>
+
+    <div id="overlay">
+        <h1 id="status-title" style="font-size: 3rem; -webkit-text-stroke: 2px black;">BERHASIL!</h1>
+        <div class="neu-box" style="padding: 20px; color: black; background: white;">
+            <p id="status-msg">Skor Kamu: 0</p>
+            <button class="neu-btn" onclick="resetGame()">MAIN LAGI</button>
+        </div>
+    </div>
+
+    <script>
+        const wordList = [
+            {w: "BUNGA", c: "ALAM"}, {w: "GUNUNG", c: "ALAM"}, {w: "LAUTAN", c: "ALAM"}, {w: "HUTAN", c: "ALAM"},
+            {w: "BURUNG", c: "HEWAN"}, {w: "KUCING", c: "HEWAN"}, {w: "ANJING", c: "HEWAN"}, {w: "IKAN", c: "HEWAN"},
+            {w: "GAJAH", c: "HEWAN"}, {w: "HARIMAU", c: "HEWAN"}, {w: "MERAH", c: "WARNA"}, {w: "KUNING", c: "WARNA"},
+            {w: "HIJAU", c: "WARNA"}, {w: "BIRU", c: "WARNA"}, {w: "PUTIH", c: "WARNA"}, {w: "HITAM", c: "WARNA"},
+            {w: "BESAR", c: "UKURAN"}, {w: "KECIL", c: "UKURAN"}, {w: "PANJANG", c: "UKURAN"}, {w: "PENDEK", c: "UKURAN"},
+            {w: "RUMAH", c: "TEMPAT"}, {w: "SEKOLAH", c: "TEMPAT"}, {w: "PASAR", c: "TEMPAT"}, {w: "MASJID", c: "IBADAH"},
+            {w: "GEREJA", c: "IBADAH"}, {w: "MAKAN", c: "KEGIATAN"}, {w: "MINUM", c: "KEGIATAN"}, {w: "TIDUR", c: "KEGIATAN"},
+            {w: "BELAJAR", c: "KEGIATAN"}, {w: "BERMAIN", c: "KEGIATAN"}, {w: "SATU", c: "ANGKA"}, {w: "DUA", c: "ANGKA"},
+            {w: "TIGA", c: "ANGKA"}, {w: "EMPAT", c: "ANGKA"}, {w: "LIMA", c: "ANGKA"}, {w: "ENAM", c: "ANGKA"},
+            {w: "TUJUH", c: "ANGKA"}, {w: "DELAPAN", c: "ANGKA"}, {w: "SEMBILAN", c: "ANGKA"}, {w: "SEPULUH", c: "ANGKA"},
+            {w: "SENIN", c: "HARI"}, {w: "SELASA", c: "HARI"}, {w: "RABU", c: "HARI"}, {w: "KAMIS", c: "HARI"},
+            {w: "JUMAT", c: "HARI"}, {w: "SABTU", c: "HARI"}, {w: "MINGGU", c: "HARI"}, {w: "JANUARI", c: "BULAN"},
+            {w: "AGUSTUS", c: "BULAN"}, {w: "DESEMBER", c: "BULAN"}
+        ];
+
+        let currentWord = "";
+        let guessedLetters = [];
+        let mistakes = 0;
+        let score = 0;
+        let streak = 0;
+        let timer = 30;
+        let timerInterval;
+        let gameActive = false;
+
+        // Audio Context Setup
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(freq, type, duration) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        const sounds = {
+            correct: () => playSound(880, 'sine', 0.2),
+            wrong: () => playSound(220, 'square', 0.3),
+            win: () => { 
+                playSound(523, 'sine', 0.1); 
+                setTimeout(() => playSound(659, 'sine', 0.1), 100);
+                setTimeout(() => playSound(783, 'sine', 0.3), 200);
+            },
+            lose: () => playSound(110, 'sawtooth', 0.5)
+        };
+
+        function initKeyboard() {
+            const kb = document.getElementById('keyboard');
+            kb.innerHTML = '';
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').forEach(char => {
+                const btn = document.createElement('button');
+                btn.innerText = char;
+                btn.className = 'neu-btn key';
+                btn.id = `key-${char}`;
+                btn.onclick = () => handleGuess(char);
+                kb.appendChild(btn);
+            });
+        }
+
+        function startGame() {
+            const randomObj = wordList[Math.floor(Math.random() * wordList.length)];
+            currentWord = randomObj.w;
+            document.getElementById('hint-text').innerText = `KATEGORI: ${randomObj.c}`;
+            guessedLetters = [];
+            mistakes = 0;
+            timer = 30;
+            gameActive = true;
+            
+            // Reset character
+            for(let i=0; i<6; i++) {
+                document.getElementById(`part-${i}`).classList.remove('visible');
+            }
+
+            renderWord();
+            initKeyboard();
+            updateStats();
+            startTimer();
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timer--;
+                document.getElementById('timer-val').innerText = timer;
+                if(timer <= 0) endGame(false);
+            }, 1000);
+        }
+
+        function renderWord() {
+            const container = document.getElementById('word-container');
+            container.innerHTML = '';
+            currentWord.split('').forEach(char => {
+                const span = document.createElement('span');
+                span.className = 'letter-slot';
+                if(guessedLetters.includes(char)) {
+                    span.innerText = char;
+                    span.classList.add('letter-pop');
+                } else {
+                    span.innerText = '';
+                }
+                container.appendChild(span);
+            });
+        }
+
+        function handleGuess(char) {
+            if(!gameActive || guessedLetters.includes(char)) return;
+
+            guessedLetters.push(char);
+            document.getElementById(`key-${char}`).disabled = true;
+
+            if(currentWord.includes(char)) {
+                sounds.correct();
+                renderWord();
+                checkWin();
+            } else {
+                sounds.wrong();
+                document.getElementById(`part-${mistakes}`).classList.add('visible');
+                mistakes++;
+                if(mistakes >= 6) endGame(false);
+            }
+        }
+
+        function checkWin() {
+            const isWin = currentWord.split('').every(char => guessedLetters.includes(char));
+            if(isWin) {
+                const bonus = timer * 10;
+                score += 100 + bonus;
+                streak++;
+                sounds.win();
+                updateStats();
+                gameActive = false;
+                clearInterval(timerInterval);
+                
+                setTimeout(() => {
+                    // Auto next level or show win screen
+                    if(streak % 5 === 0) {
+                        showOverlay(true);
+                    } else {
+                        startGame();
+                    }
+                }, 1000);
+            }
+        }
+
+        function endGame(win) {
+            gameActive = false;
+            clearInterval(timerInterval);
+            if(!win) {
+                sounds.lose();
+                streak = 0;
+                showOverlay(false);
+            }
+            updateStats();
+        }
+
+        function showOverlay(win) {
+            const overlay = document.getElementById('overlay');
+            const title = document.getElementById('status-title');
+            const msg = document.getElementById('status-msg');
+            
+            overlay.style.display = 'flex';
+            if(win) {
+                title.innerText = "HEBAT!";
+                title.style.color = "var(--secondary)";
+                msg.innerText = `Kamu mencapai streak ${streak}!\nTotal Skor: ${score}`;
+            } else {
+                title.innerText = "YAAH!";
+                title.style.color = "var(--accent)";
+                msg.innerText = `Katanya adalah: ${currentWord}\nTotal Skor: ${score}`;
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('score-val').innerText = score;
+            document.getElementById('streak-val').innerText = streak;
+            document.getElementById('timer-val').innerText = timer;
+        }
+
+        function resetGame() {
+            score = 0;
+            streak = 0;
+            startGame();
+        }
+
+        // Support Physical Keyboard
+        window.addEventListener('keydown', (e) => {
+            const char = e.key.toUpperCase();
+            if(/^[A-Z]$/.test(char)) handleGuess(char);
+        });
+
+        // Start initial game
+        startGame();
+    </script>
+</body>
+</html>
