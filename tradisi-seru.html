@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRADISI SERU - APeL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --yellow: #F9A825;
+            --red: #B71C1C;
+            --black: #1A1A1A;
+            --white: #FFFFFF;
+            --shadow: 6px 6px 0px #000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Exo 2', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #f0f0f0;
+            color: var(--black);
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+
+        #app {
+            max-width: 600px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background-color: #fff;
+            border-left: 5px solid var(--black);
+            border-right: 5px solid var(--black);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Neubrutalism Style */
+        .btn-brutal {
+            background-color: var(--yellow);
+            border: 4px solid var(--black);
+            box-shadow: var(--shadow);
+            padding: 15px 20px;
+            font-weight: 900;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.1s;
+            text-transform: uppercase;
+            display: inline-block;
+            margin: 10px;
+            text-decoration: none;
+            color: var(--black);
+        }
+
+        .btn-brutal:active {
+            transform: translate(3px, 3px);
+            box-shadow: 2px 2px 0px #000;
+        }
+
+        .card-brutal {
+            background-color: var(--white);
+            border: 4px solid var(--black);
+            box-shadow: var(--shadow);
+            padding: 20px;
+            margin: 15px;
+        }
+
+        /* Screens */
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            flex-grow: 1;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header */
+        header {
+            background-color: var(--red);
+            padding: 15px;
+            color: white;
+            border-bottom: 5px solid var(--black);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-to-portal {
+            background: var(--yellow);
+            padding: 5px 10px;
+            border: 2px solid var(--black);
+            font-weight: bold;
+            text-decoration: none;
+            color: var(--black);
+            font-size: 0.8rem;
+        }
+
+        /* Specific Game UI */
+        #gasing-arena { width: 100%; height: 200px; display: flex; justify-content: center; align-items: center; }
+        #gasing-obj { width: 100px; height: 100px; background: var(--red); border: 4px solid black; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
+
+        .congklak-board {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 5px;
+            background: #8d6e63;
+            padding: 10px;
+            border: 4px solid black;
+            border-radius: 50px;
+        }
+        .hole {
+            width: 40px; height: 40px; border-radius: 50%; border: 2px solid black; background: #5d4037;
+            display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem;
+        }
+        .hole.big { height: 80px; border-radius: 20px; grid-row: span 1; }
+
+        #kite-arena {
+            width: 100%; height: 300px; background: #81D4FA; border: 4px solid black; position: relative; overflow: hidden;
+        }
+        #kite {
+            position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); width: 50px; height: 50px; background: var(--red); border: 2px solid black; transform: rotate(45deg);
+        }
+
+        .quiz-option { width: 100%; text-align: left; }
+
+        #engklek-grid {
+            display: flex; flex-direction: column-reverse; gap: 10px;
+        }
+        .engklek-box {
+            width: 60px; height: 60px; border: 4px solid black; display: flex; align-items: center; justify-content: center; font-weight: 900; background: var(--yellow);
+        }
+        .engklek-row { display: flex; gap: 10px; justify-content: center; }
+
+        .hidden { display: none; }
+        h1 { font-size: 2.5rem; text-align: center; margin-bottom: 20px; text-shadow: 3px 3px 0px var(--yellow); color: var(--red); -webkit-text-stroke: 1.5px black; }
+        .score-display { font-size: 1.5rem; font-weight: 900; margin: 10px; }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <header>
+        <span style="font-weight: 900;">TRADISI SERU</span>
+        <a href="https://apel-pembelajaran.vercel.app" class="back-to-portal">KEMBALI KE APeL</a>
+    </header>
+
+    <!-- Main Menu -->
+    <div id="screen-main" class="screen active">
+        <h1>TRADISI SERU</h1>
+        <p style="margin-bottom: 20px; text-align: center; font-weight: bold;">Pilih Permainan Tradisional Indonesia:</p>
+        <button class="btn-brutal" onclick="startGame('gasing')">1. GASING SPIN</button>
+        <button class="btn-brutal" onclick="startGame('congklak')">2. CONGKLAK</button>
+        <button class="btn-brutal" onclick="startGame('layang')">3. LAYANG-LAYANG</button>
+        <button class="btn-brutal" onclick="startGame('kuis')">4. KUIS TRADISI</button>
+        <button class="btn-brutal" onclick="startGame('engklek')">5. ENGKLEK</button>
+        <button class="btn-brutal" style="background:#fff" onclick="showLeaderboard()">LEADERBOARD</button>
+    </div>
+
+    <!-- Game 1: Gasing -->
+    <div id="screen-gasing" class="screen">
+        <h2>GASING SPIN</h2>
+        <p>Klik secepat mungkin dalam 5 detik!</p>
+        <div id="gasing-arena">
+            <div id="gasing-obj"></div>
+        </div>
+        <div class="score-display">Klik: <span id="gasing-count">0</span></div>
+        <div id="gasing-timer" style="font-weight: bold;">Waktu: 5s</div>
+        <button id="btn-gasing-start" class="btn-brutal" onclick="playGasing()">MULAI!</button>
+        <button class="btn-brutal" style="background: #ccc" onclick="showMain()">KEMBALI</button>
+    </div>
+
+    <!-- Game 2: Congklak -->
+    <div id="screen-congklak" class="screen">
+        <h2>CONGKLAK MINI</h2>
+        <p>Klik lubang kecil untuk memindahkan biji!</p>
+        <div class="congklak-board">
+            <div class="hole big" id="hole-p2">0</div>
+            <div style="display: grid; grid-template-columns: repeat(7, 1fr); grid-column: span 7; gap: 5px;">
+                <div class="hole" onclick="moveCongklak(0)" id="h0">7</div>
+                <div class="hole" onclick="moveCongklak(1)" id="h1">7</div>
+                <div class="hole" onclick="moveCongklak(2)" id="h2">7</div>
+                <div class="hole" onclick="moveCongklak(3)" id="h3">7</div>
+                <div class="hole" onclick="moveCongklak(4)" id="h4">7</div>
+                <div class="hole" onclick="moveCongklak(5)" id="h5">7</div>
+                <div class="hole" onclick="moveCongklak(6)" id="h6">7</div>
+                <!-- Row 2 -->
+                <div class="hole" id="h13">7</div>
+                <div class="hole" id="h12">7</div>
+                <div class="hole" id="h11">7</div>
+                <div class="hole" id="h10">7</div>
+                <div class="hole" id="h9">7</div>
+                <div class="hole" id="h8">7</div>
+                <div class="hole" id="h7">7</div>
+            </div>
+            <div class="hole big" id="hole-p1">0</div>
+        </div>
+        <div class="score-display">Biji Anda: <span id="congklak-score">0</span></div>
+        <button class="btn-brutal" style="background: #ccc" onclick="showMain()">KEMBALI</button>
+    </div>
+
+    <!-- Game 3: Layang-layang -->
+    <div id="screen-layang" class="screen">
+        <h2>LAYANG-LAYANG</h2>
+        <p>Goyangkan kursor/jari untuk menyeimbangkan!</p>
+        <div id="kite-arena">
+            <div id="kite"></div>
+        </div>
+        <div class="score-display">Skor: <span id="kite-score">0</span></div>
+        <button id="btn-kite-start" class="btn-brutal" onclick="playLayang()">MULAI</button>
+        <button class="btn-brutal" style="background: #ccc" onclick="showMain()">KEMBALI</button>
+    </div>
+
+    <!-- Game 4: Kuis -->
+    <div id="screen-kuis" class="screen">
+        <h2 id="kuis-title">KUIS TRADISI</h2>
+        <div class="card-brutal" style="width: 100%;">
+            <p id="kuis-question" style="font-weight: bold; margin-bottom: 15px;">Pertanyaan...</p>
+            <div id="kuis-options"></div>
+        </div>
+        <div class="score-display">Benar: <span id="kuis-score">0</span> / <span id="kuis-total">0</span></div>
+        <button class="btn-brutal" style="background: #ccc" onclick="showMain()">KEMBALI</button>
+    </div>
+
+    <!-- Game 5: Engklek -->
+    <div id="screen-engklek" class="screen">
+        <h2>ENGKLEK</h2>
+        <p>Tekan Tombol yang sesuai dengan kotak!</p>
+        <div id="engklek-grid">
+            <!-- Boxes generated by JS -->
+        </div>
+        <div class="score-display">Lompatan: <span id="engklek-score">0</span></div>
+        <div style="display:flex; gap:10px;">
+            <button class="btn-brutal" onclick="jumpEngklek('L')">KIRI</button>
+            <button class="btn-brutal" onclick="jumpEngklek('R')">KANAN</button>
+        </div>
+        <button class="btn-brutal" style="background: #ccc" onclick="showMain()">KEMBALI</button>
+    </div>
+
+    <!-- Leaderboard -->
+    <div id="screen-leaderboard" class="screen">
+        <h1>LEADERBOARD</h1>
+        <div id="leaderboard-list" style="width: 100%;"></div>
+        <button class="btn-brutal" onclick="showMain()">KEMBALI KE MENU</button>
+    </div>
+</div>
+
+<script>
+    // Audio Context Setup
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSound(freq, type = 'sine', duration = 0.1) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+    }
+
+    // Navigation Logic
+    function showMain() {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('screen-main').classList.add('active');
+        resetAllGames();
+    }
+
+    function startGame(game) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('screen-' + game).classList.add('active');
+        if(game === 'kuis') initKuis();
+        if(game === 'engklek') initEngklek();
+        if(game === 'congklak') initCongklak();
+    }
+
+    function resetAllGames() {
+        clearInterval(gameInterval);
+        gasingClicks = 0;
+        kiteScore = 0;
+        kuisIdx = 0;
+        kuisCorrect = 0;
+        engklekIdx = 0;
+    }
+
+    let gameInterval;
+
+    // --- GAME 1: GASING SPIN ---
+    let gasingClicks = 0;
+    let gasingTime = 5;
+    let gasingActive = false;
+
+    function playGasing() {
+        if(gasingActive) return;
+        gasingClicks = 0;
+        gasingTime = 5;
+        gasingActive = true;
+        document.getElementById('gasing-count').innerText = 0;
+        document.getElementById('btn-gasing-start').classList.add('hidden');
+        
+        playSound(440);
+
+        const timer = setInterval(() => {
+            gasingTime--;
+            document.getElementById('gasing-timer').innerText = `Waktu: ${gasingTime}s`;
+            if(gasingTime <= 0) {
+                clearInterval(timer);
+                gasingActive = false;
+                document.getElementById('btn-gasing-start').classList.remove('hidden');
+                saveScore('Gasing Spin', gasingClicks);
+                alert('Selesai! Gasing berputar sebanyak ' + gasingClicks + ' kali!');
+            }
+        }, 1000);
+
+        document.getElementById('gasing-arena').onmousedown = () => {
+            if(gasingActive) {
+                gasingClicks++;
+                document.getElementById('gasing-count').innerText = gasingClicks;
+                document.getElementById('gasing-obj').style.transform = `rotate(${gasingClicks * 20}deg)`;
+                playSound(600 + (gasingClicks * 2), 'square', 0.05);
+            }
+        };
+    }
+
+    // --- GAME 2: CONGKLAK ---
+    let board = [];
+    function initCongklak() {
+        board = [7, 7, 7, 7, 7, 7, 7, 0, 7, 7, 7, 7, 7, 7, 7, 0]; // 0-6 P1, 7 Big P1, 8-14 P2, 15 Big P2
+        renderCongklak();
+    }
+    function renderCongklak() {
+        for(let i=0; i<7; i++) document.getElementById('h'+i).innerText = board[i];
+        for(let i=7; i<14; i++) document.getElementById('h'+i).innerText = board[i];
+        document.getElementById('hole-p1').innerText = board[7];
+        document.getElementById('hole-p2').innerText = board[15];
+        document.getElementById('congklak-score').innerText = board[7];
+    }
+    function moveCongklak(idx) {
+        let seeds = board[idx];
+        if(seeds === 0) return;
+        board[idx] = 0;
+        let curr = idx;
+        while(seeds > 0) {
+            curr = (curr + 1) % 16;
+            if(curr === 15) continue; // Skip computer hole
+            board[curr]++;
+            seeds--;
+            playSound(800 + (seeds * 20), 'sine', 0.05);
+        }
+        renderCongklak();
+        if(board[7] > 50) { 
+            saveScore('Congklak', board[7]);
+            alert('Hebat! Kamu mengumpulkan banyak biji!');
+            showMain();
+        }
+    }
+
+    // --- GAME 3: LAYANG-LAYANG ---
+    let kitePos = 50;
+    let kiteScore = 0;
+    let kiteActive = false;
+    function playLayang() {
+        kiteActive = true;
+        kiteScore = 0;
+        kitePos = 50;
+        document.getElementById('btn-kite-start').classList.add('hidden');
+        
+        const arena = document.getElementById('kite-arena');
+        arena.onmousemove = (e) => {
+            let rect = arena.getBoundingClientRect();
+            let x = ((e.clientX - rect.left) / rect.width) * 100;
+            kitePos = x;
+        };
+        arena.ontouchmove = (e) => {
+            let rect = arena.getBoundingClientRect();
+            let x = ((e.touches[0].clientX - rect.left) / rect.width) * 100;
+            kitePos = x;
+        };
+
+        let wind = 0;
+        gameInterval = setInterval(() => {
+            wind += (Math.random() - 0.5) * 5;
+            let displayPos = kitePos + wind;
+            document.getElementById('kite').style.left = displayPos + '%';
+            
+            if(displayPos < 0 || displayPos > 100) {
+                clearInterval(gameInterval);
+                kiteActive = false;
+                saveScore('Layang-Layang', kiteScore);
+                alert('Layang-layang putus! Skor: ' + kiteScore);
+                document.getElementById('btn-kite-start').classList.remove('hidden');
+            } else {
+                kiteScore++;
+                document.getElementById('kite-score').innerText = kiteScore;
+                if(kiteScore % 10 === 0) playSound(300, 'triangle', 0.05);
+            }
+        }, 100);
+    }
+
+    // --- GAME 4: KUIS ---
+    const questions = [
+        { q: "Alat permainan Congklak biasanya terbuat dari...", a: ["Plastik/Kayu", "Besi", "Kaca", "Kertas"], c: 0 },
+        { q: "Permainan menyusun batu lalu meruntuhkannya dengan bola disebut...", a: ["Bekel", "Boy-boyan", "Egrang", "Gasing"], c: 1 },
+        { q: "Egrang dimainkan dengan menggunakan alat berbahan...", a: ["Bambu", "Karet", "Tali", "Tanah"], c: 0 },
+        { q: "Permainan yang menggunakan cangkang kerang atau biji-bijian adalah...", a: ["Gundu", "Congklak", "Layangan", "Engklek"], c: 1 },
+        { q: "Lagu 'Cublak-Cublak Suweng' mengiringi permainan dari...", a: ["Jawa", "Sumatera", "Papua", "Bali"], c: 0 },
+        { q: "Berapa jumlah lubang kecil pada papan Congklak standar?", a: ["10", "12", "14", "16"], c: 2 },
+        { q: "Permainan memutar benda kayu dengan bantuan tali disebut...", a: ["Gasing", "Yoyo", "Kelereng", "Engklek"], c: 0 },
+        { q: "Istilah 'Gundu' adalah nama lain dari permainan...", a: ["Kelereng", "Lompat Tali", "Masak-masakan", "Sunda Manda"], c: 0 },
+        { q: "Permainan 'Bentengan' melatih kekuatan...", a: ["Ingatan", "Kerjasama & Lari", "Penciuman", "Membaca"], c: 1 },
+        { q: "Permainan lompat tali biasanya menggunakan jalinan...", a: ["Karet gelang", "Kabel", "Benang wol", "Akar"], c: 0 },
+        { q: "Engklek juga sering disebut dengan nama...", a: ["Sunda Manda", "Gobak Sodor", "Patenlele", "Dakon"], c: 0 },
+        { q: "Permainan menghalangi lawan melewati garis disebut...", a: ["Gobak Sodor", "Bekel", "Kelereng", "Gasing"], c: 0 },
+        { q: "Biji dalam permainan Bekel disebut...", a: ["Kuwuk", "Pithes", "Batu", "Biji Bekel"], c: 3 },
+        { q: "Permainan yang membutuhkan bambu untuk melompat...", a: ["Rangku Alu", "Egrang", "Patenlele", "Gasing"], c: 0 },
+        { q: "Senjata tradisional yang sering jadi mainan anak adalah...", a: ["Ketapel", "Keris", "Pedang", "Tombak"], c: 0 },
+        { q: "Apa nama alat pemukul dalam permainan Patenlele?", a: ["Bambu pendek", "Raket", "Tongkat besi", "Tangan"], c: 0 },
+        { q: "Permainan menyembunyikan benda di telapak tangan...", a: ["Cublak Suweng", "Gundu", "Layangan", "Egrang"], c: 0 },
+        { q: "Layang-layang aduan biasanya menggunakan benang...", a: ["Gelasan", "Sutra", "Rafia", "Wol"], c: 0 },
+        { q: "Berapa orang minimal untuk main lompat tali karet?", a: ["3 orang", "1 orang", "5 orang", "10 orang"], c: 0 },
+        { q: "Permainan tradisi bermanfaat untuk melatih...", a: ["Karakter & Sosial", "Kemalasan", "Main HP", "Makan"], c: 0 }
+    ];
+    let kuisIdx = 0;
+    let kuisCorrect = 0;
+    function initKuis() {
+        kuisIdx = 0;
+        kuisCorrect = 0;
+        showQuestion();
+    }
+    function showQuestion() {
+        const q = questions[kuisIdx];
+        document.getElementById('kuis-question').innerText = `${kuisIdx + 1}. ${q.q}`;
+        document.getElementById('kuis-score').innerText = kuisCorrect;
+        document.getElementById('kuis-total').innerText = questions.length;
+        
+        const optionsDiv = document.getElementById('kuis-options');
+        optionsDiv.innerHTML = '';
+        q.a.forEach((opt, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-brutal quiz-option';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(i);
+            optionsDiv.appendChild(btn);
+        });
+    }
+    function checkAnswer(i) {
+        if(i === questions[kuisIdx].c) {
+            kuisCorrect++;
+            playSound(1000, 'sine', 0.1);
+        } else {
+            playSound(200, 'sawtooth', 0.2);
+        }
+        kuisIdx++;
+        if(kuisIdx < questions.length) {
+            showQuestion();
+        } else {
+            saveScore('Kuis Tradisi', kuisCorrect * 5);
+            alert('Kuis Selesai! Skor Anda: ' + (kuisCorrect * 5));
+            showMain();
+        }
+    }
+
+    // --- GAME 5: ENGKLEK ---
+    let engklekPattern = [];
+    let engklekIdx = 0;
+    function initEngklek() {
+        engklekIdx = 0;
+        engklekPattern = [];
+        const grid = document.getElementById('engklek-grid');
+        grid.innerHTML = '';
+        for(let i=0; i<10; i++) {
+            const type = Math.random() > 0.5 ? 'L' : 'R';
+            engklekPattern.push(type);
+            const row = document.createElement('div');
+            row.className = 'engklek-row';
+            row.innerHTML = `<div class="engklek-box" id="e-${i}">${type}</div>`;
+            grid.appendChild(row);
+        }
+        updateEngklekUI();
+    }
+    function updateEngklekUI() {
+        document.getElementById('engklek-score').innerText = engklekIdx;
+        for(let i=0; i<10; i++) {
+            const el = document.getElementById('e-'+i);
+            el.style.background = i < engklekIdx ? '#4CAF50' : (i === engklekIdx ? varColor('--yellow') : '#fff');
+        }
+    }
+    function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name); }
+    function jumpEngklek(side) {
+        if(side === engklekPattern[engklekIdx]) {
+            engklekIdx++;
+            playSound(500 + (engklekIdx * 50), 'sine', 0.1);
+            if(engklekIdx >= 10) {
+                saveScore('Engklek', 100);
+                alert('Berhasil mencapai ujung!');
+                initEngklek();
+            }
+        } else {
+            playSound(150, 'square', 0.3);
+            engklekIdx = 0;
+            alert('Salah langkah! Mulai lagi.');
+        }
+        updateEngklekUI();
+    }
+
+    // Leaderboard Logic
+    function saveScore(game, score) {
+        let scores = JSON.parse(localStorage.getItem('tradisi_scores') || '[]');
+        scores.push({ game, score, date: new Date().toLocaleDateString() });
+        scores.sort((a, b) => b.score - a.score);
+        localStorage.setItem('tradisi_scores', JSON.stringify(scores.slice(0, 10)));
+    }
+
+    function showLeaderboard() {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('screen-leaderboard').classList.add('active');
+        const list = document.getElementById('leaderboard-list');
+        const scores = JSON.parse(localStorage.getItem('tradisi_scores') || '[]');
+        list.innerHTML
