@@ -1,4 +1,4 @@
-Remove 'Daftar Hadiah' and implement complete section toggle: main menu disappears when a sub-section is active.<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -17,211 +17,189 @@ Remove 'Daftar Hadiah' and implement complete section toggle: main menu disappea
             --purple: #a78bfa;
             --pink: #f472b6;
         }
+
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background: var(--bg); color: var(--white); min-height: 100vh; padding: 20px; overflow-x: hidden; }
-        .neo-box { background: var(--white); border: 4px solid var(--black); box-shadow: 10px 10px 0px var(--black); color: var(--black); transition: 0.2s; }
+
+        .neo-box { background: var(--white); border: 4px solid var(--black); box-shadow: 10px 10px 0px var(--black); color: var(--black); transition: 0.2s; border-radius: 0; }
         .neo-box:hover { transform: translate(-4px, -4px); box-shadow: 14px 14px 0px var(--black); }
-        
+
         header { text-align: center; padding: 40px 20px; }
         .logo { background: var(--yellow); padding: 15px 40px; display: inline-block; transform: rotate(-2deg); border: 5px solid var(--black); box-shadow: 12px 12px 0px var(--black); margin-bottom: 20px; }
-        .logo h1 { font-size: 3.5rem; font-weight: 800; }
+        .logo h1 { font-size: 3.5rem; font-weight: 800; color: var(--black); }
         .tagline { font-size: 1.4rem; color: var(--yellow); font-weight: 600; text-shadow: 3px 3px 0px var(--black); }
 
-        /* Navigation & Sections */
+        /* Navigation Grid */
+        #dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; max-width: 1200px; margin: 50px auto; padding: 20px; }
+        .nav-card { padding: 40px 20px; cursor: pointer; text-align: center; font-weight: 800; font-size: 1.5rem; display: flex; flex-direction: column; gap: 20px; border-radius: 0; }
+        .nav-card span:first-child { font-size: 4.5rem; }
+
+        /* Page Sections */
         .page-section { display: none; max-width: 1200px; margin: 0 auto; padding: 20px; }
         .page-section.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Dashboard Grid */
-        #dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; max-width: 1100px; margin: 50px auto; }
-        .nav-card { padding: 35px 20px; cursor: pointer; text-align: center; font-weight: 800; font-size: 1.2rem; display: flex; flex-direction: column; gap: 15px; }
-        .nav-card span:first-child { font-size: 3.5rem; }
+        /* Buttons */
+        .btn-back { display: inline-block; background: var(--yellow); color: var(--black); padding: 15px 30px; font-weight: 800; border: 4px solid var(--black); box-shadow: 6px 6px 0px var(--black); text-decoration: none; margin-bottom: 40px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-back:hover { transform: translate(-3px, -3px); box-shadow: 9px 9px 0px var(--black); }
 
-        /* Back Button */
-        .btn-back { display: inline-block; background: var(--yellow); color: var(--black); padding: 10px 20px; font-weight: 800; border: 3px solid var(--black); box-shadow: 5px 5px 0px var(--black); text-decoration: none; margin-bottom: 30px; cursor: pointer; }
-        .btn-back:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0px var(--black); }
+        .btn-play { background: var(--green); color: var(--black); padding: 10px 20px; border: 3px solid var(--black); box-shadow: 4px 4px 0px var(--black); font-weight: 800; text-decoration: none; display: inline-block; margin-top: 15px; }
+        .btn-play:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px var(--black); }
 
         /* Content Styles */
-        .section-title { text-align: center; margin-bottom: 40px; }
-        .title-box { background: var(--white); color: var(--black); display: inline-block; padding: 10px 40px; border: 4px solid var(--black); box-shadow: 8px 8px 0px var(--black); transform: skew(-5deg); font-weight: 800; font-size: 1.8rem; }
+        .section-header { text-align: center; margin-bottom: 50px; }
+        .title-box { background: var(--white); color: var(--black); display: inline-block; padding: 15px 60px; border: 5px solid var(--black); box-shadow: 10px 10px 0px var(--black); transform: skew(-5deg); font-weight: 800; font-size: 2.5rem; text-transform: uppercase; }
         
-        .content-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .item-card { background: var(--white); color: var(--black); padding: 20px; border: 3px solid var(--black); box-shadow: 6px 6px 0px var(--black); }
-        .item-card h3 { margin-bottom: 10px; font-weight: 800; }
+        .content-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
+        .item-card { background: var(--white); color: var(--black); padding: 25px; border: 4px solid var(--black); box-shadow: 8px 8px 0px var(--black); }
+        .item-card h3 { margin-bottom: 12px; font-weight: 800; text-transform: uppercase; font-size: 1.3rem; }
+        .item-card p { color: #444; font-size: 0.95rem; line-height: 1.5; }
 
-        /* Games Grid specific */
-        .game-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
-        .game-card { padding: 30px; display: flex; flex-direction: column; height: 100%; color: white; }
-        .game-emoji { font-size: 3.5rem; margin-bottom: 20px; }
-        .game-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 12px; }
-        .btn-play { margin-top: auto; background: var(--black); color: white; text-align: center; padding: 15px; text-decoration: none; font-weight: 800; border: 3px solid var(--black); transition: 0.2s; }
-        .btn-play:hover { background: white; color: black; }
+        footer { text-align: center; padding: 60px 20px; color: var(--yellow); font-weight: 600; }
 
-        footer { text-align: center; padding: 50px; margin-top: 100px; background: var(--yellow); color: var(--black); border-top: 5px solid var(--black); font-weight: 600; }
+        /* Color Variations for cards */
+        .bg-yellow { background: var(--yellow) !important; }
+        .bg-green { background: var(--green) !important; }
+        .bg-blue { background: var(--blue) !important; }
+        .bg-orange { background: var(--orange) !important; }
+        .bg-purple { background: var(--purple) !important; }
+        .bg-pink { background: var(--pink) !important; }
+
+        @media (max-width: 768px) {
+            .logo h1 { font-size: 2.2rem; }
+            .title-box { font-size: 1.5rem; padding: 10px 30px; }
+            #dashboard { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
-    <header>
-        <div class="tagline">Belajar Seru Bersama APeL!</div>
-        <div class="logo"><h1>APeL</h1></div>
-        <div style="margin-top: 10px; font-weight: 600; opacity: 0.8;">by Agung Aljabari, M.Pd.</div>
+
+    <header id="main-header">
+        <div class="logo">
+            <h1>APeL</h1>
+        </div>
+        <p class="tagline">Media Belajar Kreatif & Interaktif</p>
     </header>
 
     <!-- Main Dashboard -->
-    <div id="dashboard" class="page-section active">
-        <div class="nav-card neo-box" style="background: var(--green);" onclick="showSection('games')">
-            <span>🎮</span><span>GAME EDUKASI</span>
+    <div id="dashboard">
+        <div class="nav-card neo-box bg-yellow" onclick="showSection('games')">
+            <span>🎮</span>
+            <span>GAME EDUKASI</span>
         </div>
-        <div class="nav-card neo-box" style="background: var(--blue);" onclick="showSection('modul')">
-            <span>📚</span><span>MODUL AJAR</span>
+        <div class="nav-card neo-box bg-green" onclick="showSection('modul')">
+            <span>📚</span>
+            <span>MODUL AJAR</span>
         </div>
-        <div class="nav-card neo-box" style="background: var(--orange);" onclick="showSection('lkpd')">
-            <span>📝</span><span>LKPD</span>
+        <div class="nav-card neo-box bg-blue" onclick="showSection('lkpd')">
+            <span>📝</span>
+            <span>LKPD INTERAKTIF</span>
         </div>
-        <div class="nav-card neo-box" style="background: var(--purple);" onclick="showSection('absen')">
-            <span>📋</span><span>DAFTAR HADIR</span>
+        <div class="nav-card neo-box bg-orange" onclick="showSection('materi')">
+            <span>📖</span>
+            <span>MATERI BELAJAR</span>
         </div>
-        <div class="nav-card neo-box" style="background: var(--pink);" onclick="showSection('hadiah')">
-            <span>🎁</span><span>DAFTAR HADIAH</span>
+        <div class="nav-card neo-box bg-purple" onclick="showSection('absen')">
+            <span>📅</span>
+            <span>DAFTAR HADIR</span>
         </div>
     </div>
 
-    <!-- Games Section -->
+    <!-- Game Edukasi Section -->
     <div id="games" class="page-section">
-        <div class="btn-back" onclick="showSection('dashboard')">⬅ KEMBALI KE BERANDA</div>
-        <div class="section-title"><div class="title-box">KOLEKSI GAME (11)</div></div>
-        <div class="game-grid">
-            <div class="game-card neo-box" style="background: #7C3AED;">
-                <div class="game-emoji">🚀</div>
-                <h2 class="game-title">GALAKSI ANGKA</h2>
-                <p>Tantangan matematika di luar angkasa.</p>
-                <a href="galaksi-angka.html" class="btn-play">MAIN SEKARANG</a>
+        <div class="btn-back" onclick="showDashboard()">⬅ KEMBALI KE BERANDA</div>
+        <div class="section-header">
+            <div class="title-box">GAME EDUKASI</div>
+        </div>
+        <div class="content-grid">
+            <div class="item-card neo-box">
+                <h3>Kuis Matematika Ceria</h3>
+                <p>Uji kemampuan berhitungmu dengan tantangan waktu yang seru!</p>
+                <a href="#" class="btn-play">MAIN SEKARANG</a>
             </div>
-            <div class="game-card neo-box" style="background: #0891B2;">
-                <div class="game-emoji">🔍</div>
-                <h2 class="game-title">KATA SAKTI</h2>
-                <p>Temukan kata tersembunyi.</p>
-                <a href="kata-sakti.html" class="btn-play">MAIN SEKARANG</a>
+            <div class="item-card neo-box">
+                <h3>Tebak Kata Bergambar</h3>
+                <p>Perluas kosakata bahasa Indonesia melalui gambar-gambar menarik.</p>
+                <a href="#" class="btn-play">MAIN SEKARANG</a>
             </div>
-            <div class="game-card neo-box" style="background: #DC2626;">
-                <div class="game-emoji">🏃</div>
-                <h2 class="game-title">PESTA KAMPUNG</h2>
-                <p>Lari dan kumpulkan poin!</p>
-                <a href="pesta-kampung.html" class="btn-play">MAIN SEKARANG</a>
-            </div>
-            <div class="game-card neo-box" style="background: #92400E;">
-                <div class="game-emoji">🎲</div>
-                <h2 class="game-title">PAPAN NUSANTARA</h2>
-                <p>Ular tangga edukatif Indonesia.</p>
-                <a href="papan-nusantara.html" class="btn-play">MAIN SEKARANG</a>
-            </div>
-            <div class="game-card neo-box" style="background: #1E3A8A;">
-                <div class="game-emoji">⚔️</div>
-                <h2 class="game-title">JAGOAN KATA</h2>
-                <p>Uji kosakata secepat kilat.</p>
-                <a href="jagoan-kata.html" class="btn-play">MAIN SEKARANG</a>
-            </div>
-            <div class="game-card neo-box" style="background: #15803D;">
-                <div class="game-emoji">🗺️</div>
-                <h2 class="game-title">GEO SQUAD</h2>
-                <p>Misi menjelajahi provinsi Indonesia.</p>
-                <a href="geo-squad.html" class="btn-play">MAIN SEKARANG</a>
-            </div>
-            <div class="game-card neo-box" style="background: #BE185D;">
-                <div class="game-emoji">🎨</div>
-                <h2 class="game-title">DOODLE PINTAR</h2>
-                <p>Tebak gambar imajinatif.</p>
-                <a href="doodle-pintar.html" class="btn-play">MAIN SEKARANG</a>
-            </div>
-            <div class="game-card neo-box" style="background: #374151;">
-                <div class="game-emoji">♟️</div>
-                <h2 class="game-title">SI TAKTIK</h2>
-                <p>Logika dan strategi papan.</p>
-                <a href="si-taktik.html" class="btn-play">MAIN SEKARANG</a>
-            </div>
-            <div class="game-card neo-box" style="background: #C2410C;">
-                <div class="game-emoji">🪁</div>
-                <h2 class="game-title">TRADISI SERU</h2>
-                <p>Permainan rakyat tradisional.</p>
-                <a href="tradisi-seru.html" class="btn-play">MAIN SEKARANG</a>
-            </div>
-            <div class="game-card neo-box" style="background: #EA580C;">
-                <div class="game-emoji">🍳</div>
-                <h2 class="game-title">JURAGAN PECAHAN</h2>
-                <p>Masak sambil belajar pecahan.</p>
-                <a href="juragan-pecahan.html" class="btn-play">MAIN SEKARANG</a>
-            </div>
-            <div class="game-card neo-box" style="background: #1D4ED8;">
-                <div class="game-emoji">🏀</div>
-                <h2 class="game-title">BOLA PINTAR</h2>
-                <p>Basketball matematika kilat.</p>
-                <a href="bola-pintar.html" class="btn-play">MAIN SEKARANG</a>
+            <div class="item-card neo-box">
+                <h3>Petualangan Sains</h3>
+                <p>Jelajahi ekosistem alam dalam misi penyelamatan lingkungan.</p>
+                <a href="#" class="btn-play">MAIN SEKARANG</a>
             </div>
         </div>
     </div>
 
-    <!-- Modul Section -->
+    <!-- Modul Ajar Section -->
     <div id="modul" class="page-section">
-        <div class="btn-back" onclick="showSection('dashboard')">⬅ KEMBALI KE BERANDA</div>
-        <div class="section-title"><div class="title-box">MODUL AJAR</div></div>
+        <div class="btn-back" onclick="showDashboard()">⬅ KEMBALI KE BERANDA</div>
+        <div class="section-header">
+            <div class="title-box">MODUL AJAR</div>
+        </div>
         <div class="content-grid">
-            <div class="item-card">
-                <h3>Materi Matematika Fase A</h3>
-                <p>Bilangan cacah, penjumlahan, dan pengurangan sederhana.</p>
-                <a href="#" style="font-weight: 800; color: var(--blue);">UNDUH MODUL (PDF)</a>
+            <div class="item-card neo-box">
+                <h3>Modul Tematik Kelas 4</h3>
+                <p>Panduan lengkap pembelajaran tematik kurikulum merdeka.</p>
+                <a href="#" class="btn-play">BACA MODUL</a>
             </div>
-            <div class="item-card">
-                <h3>Materi Bahasa Indonesia Fase B</h3>
-                <p>Membaca teks narasi dan menyusun kalimat efektif.</p>
-                <a href="#" style="font-weight: 800; color: var(--blue);">UNDUH MODUL (PDF)</a>
+            <div class="item-card neo-box">
+                <h3>RPP Berdiferensiasi</h3>
+                <p>Contoh penyusunan RPP untuk kebutuhan belajar beragam.</p>
+                <a href="#" class="btn-play">BACA MODUL</a>
             </div>
         </div>
     </div>
 
     <!-- LKPD Section -->
     <div id="lkpd" class="page-section">
-        <div class="btn-back" onclick="showSection('dashboard')">⬅ KEMBALI KE BERANDA</div>
-        <div class="section-title"><div class="title-box">LKPD INTERAKTIF</div></div>
+        <div class="btn-back" onclick="showDashboard()">⬅ KEMBALI KE BERANDA</div>
+        <div class="section-header">
+            <div class="title-box">LKPD INTERAKTIF</div>
+        </div>
         <div class="content-grid">
-            <div class="item-card">
-                <h3>LKPD 01: Petualangan Angka</h3>
-                <p>Latihan soal matematika seru dalam bentuk kuis.</p>
-                <a href="#" class="btn-play" style="display:inline-block; margin-top:10px;">KERJAKAN</a>
+            <div class="item-card neo-box">
+                <h3>LKPD Siklus Air</h3>
+                <p>Lembar kerja interaktif tentang proses terjadinya hujan.</p>
+                <a href="#" class="btn-play">MULAI KERJAKAN</a>
             </div>
-            <div class="item-card">
-                <h3>LKPD 02: Detektif Kata</h3>
-                <p>Menganalisis paragraf dan menemukan ide pokok.</p>
-                <a href="#" class="btn-play" style="display:inline-block; margin-top:10px;">KERJAKAN</a>
+            <div class="item-card neo-box">
+                <h3>Analisis Teks Narasi</h3>
+                <p>Latihan menemukan ide pokok dalam paragraf cerita.</p>
+                <a href="#" class="btn-play">MULAI KERJAKAN</a>
             </div>
         </div>
     </div>
 
-    <!-- Absen Section -->
+    <!-- Materi Belajar Section -->
+    <div id="materi" class="page-section">
+        <div class="btn-back" onclick="showDashboard()">⬅ KEMBALI KE BERANDA</div>
+        <div class="section-header">
+            <div class="title-box">MATERI BELAJAR</div>
+        </div>
+        <div class="content-grid">
+            <div class="item-card neo-box">
+                <h3>Video Pembelajaran IPA</h3>
+                <p>Kumpulan video penjelasan materi sains yang menarik.</p>
+                <a href="#" class="btn-play">LIHAT MATERI</a>
+            </div>
+            <div class="item-card neo-box">
+                <h3>E-Book Sejarah Dunia</h3>
+                <p>Membaca peristiwa bersejarah dengan ilustrasi berwarna.</p>
+                <a href="#" class="btn-play">LIHAT MATERI</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Daftar Hadir Section -->
     <div id="absen" class="page-section">
-        <div class="btn-back" onclick="showSection('dashboard')">⬅ KEMBALI KE BERANDA</div>
-        <div class="section-title"><div class="title-box">DAFTAR HADIR</div></div>
-        <div class="item-card" style="max-width: 600px; margin: 0 auto; text-align: center;">
-            <h3>Absensi Siswa Hari Ini</h3>
-            <p>Silakan klik tombol di bawah untuk mengisi kehadiran.</p>
-            <button class="btn-play" style="width: 100%; cursor: pointer;">ISI KEHADIRAN</button>
+        <div class="btn-back" onclick="showDashboard()">⬅ KEMBALI KE BERANDA</div>
+        <div class="section-header">
+            <div class="title-box">DAFTAR HADIR</div>
         </div>
-    </div>
-
-    <!-- Hadiah Section -->
-    <div id="hadiah" class="page-section">
-        <div class="btn-back" onclick="showSection('dashboard')">⬅ KEMBALI KE BERANDA</div>
-        <div class="section-title"><div class="title-box">DAFTAR HADIAH</div></div>
-        <div class="content-grid">
-            <div class="item-card" style="text-align: center;">
-                <div style="font-size: 3rem;">🏆</div>
-                <h3>Stiker "Jagoan Math"</h3>
-                <p>Tukarkan dengan 1000 Poin Game</p>
-            </div>
-            <div class="item-card" style="text-align: center;">
-                <div style="font-size: 3rem;">🎫</div>
-                <h3>Voucher Jajan Kantin</h3>
-                <p>Tukarkan dengan 5000 Poin Game</p>
-            </div>
+        <div class="item-card neo-box" style="max-width: 600px; margin: 0 auto; text-align: center;">
+            <h3>Absensi Harian Siswa</h3>
+            <p>Klik tombol di bawah ini untuk mencatat kehadiran Anda hari ini.</p>
+            <button class="btn-play" style="width: 100%; cursor: pointer;">ISI ABSENSI SEKARANG</button>
         </div>
     </div>
 
@@ -232,10 +210,29 @@ Remove 'Daftar Hadiah' and implement complete section toggle: main menu disappea
 
     <script>
         function showSection(sectionId) {
-            document.querySelectorAll('.page-section').forEach(section => {
-                section.classList.remove('active');
+            // Hide header and dashboard
+            document.getElementById("main-header").style.display = "none";
+            document.getElementById("dashboard").style.display = "none";
+            
+            // Hide all sections
+            document.querySelectorAll(".page-section").forEach(section => {
+                section.classList.remove("active");
             });
-            document.getElementById(sectionId).classList.add('active');
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add("active");
+            window.scrollTo(0, 0);
+        }
+
+        function showDashboard() {
+            // Show header and dashboard
+            document.getElementById("main-header").style.display = "block";
+            document.getElementById("dashboard").style.display = "grid";
+            
+            // Hide all sections
+            document.querySelectorAll(".page-section").forEach(section => {
+                section.classList.remove("active");
+            });
             window.scrollTo(0, 0);
         }
     </script>
