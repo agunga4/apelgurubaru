@@ -239,7 +239,8 @@
         let currentQuestion = 0;
         let timer = 20;
         let timerInterval;
-        let drawingInterval;
+        let drawingInt
+            let highScore = localStorage.getItem('doodlePintarHigh') || 0;erval;
         let isDrawing = false;
         let speedMultiplier = 1;
         let currentPaths = [];
@@ -513,6 +514,13 @@
         function endGame() {
             document.getElementById('end-screen').classList.remove('hidden');
             document.getElementById('final-score').innerText = `Skor Akhir: ${score}`;
+                
+    // Update high score
+    if(score > highScore) {
+        highScore = score;
+        localStorage.setItem('doodlePintarHigh', score);
+    }
+    document.getElementById('final-score').innerText = `Skor Akhir: ${score}\nRekor Tertinggi: ${highScore}`;
             playSound(500, 'sine', 0.2);
             playSound(700, 'sine', 0.2);
             playSound(900, 'sine', 0.5);
