@@ -4,38 +4,172 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GALAKSI ANGKA - Matematika Luar Angkasa [v2026-03-29]</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;800&family=Orbitron:wght@700&display=swap" rel=
-            <!-- Force deployment: 2026-03-29 20:00 -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;800&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <!-- Force deployment: 2026-03-29 20:00 -->
     <style>
-        :root { --primary: #7C3AED; --secondary: #FBBF24; --dark: #0F172A; --white: #FFFFFF; --danger: #EF4444; --success: #22C55E; --border: 4px solid #000000; --shadow: 6px 6px 0px #000000; }
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Poppins', sans-serif; background-color: var(--dark); color: var(--white); overflow: hidden; height: 100vh; display: flex; flex-direction: column; align-items: center; }
-        .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 100%); }
-        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: move linear infinite; }
-        @keyframes move { from { transform: translateY(-10vh); } to { transform: translateY(110vh); } }
-        header { width: 100%; max-width: 500px; padding: 15px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
-        .stats-box { background: var(--white); color: black; padding: 5px 12px; border: 3px solid black; box-shadow: 3px 3px 0px black; font-size: 0.9rem; font-weight: 800; }
-        .lives { font-size: 1.2rem; }
-        #game-container { width: 100%; max-width: 500px; flex: 1; position: relative; overflow: hidden; }
-        canvas { display: block; width: 100%; height: 100%; }
-        .overlay { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; z-index: 100; }
-        .hidden { display: none !important; }
-        h1 { font-family: 'Orbitron', sans-serif; font-size: 2.5rem; color: var(--secondary); margin-bottom: 20px; -webkit-text-stroke: 1px black; }
-        .btn { width: 100%; max-width: 280px; padding: 15px; margin: 10px 0; font-size: 1.2rem; font-weight: 800; border: var(--border); box-shadow: var(--shadow); cursor: pointer; transition: 0.1s; font-family: 'Poppins', sans-serif; }
-        .btn:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0px black; }
+        :root {
+            --primary: #7C3AED;
+            --secondary: #FBBF24;
+            --dark: #0F172A;
+            --white: #FFFFFF;
+            --danger: #EF4444;
+            --success: #22C55E;
+            --border: 4px solid #000000;
+            --shadow: 6px 6px 0px #000000;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark);
+            color: var(--white);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .stars {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 100%);
+        }
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: move linear infinite;
+        }
+        @keyframes move {
+            from { transform: translateY(-10vh); }
+            to { transform: translateY(110vh); }
+        }
+        header {
+            width: 100%;
+            max-width: 500px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+        .stats-box {
+            background: var(--white);
+            color: black;
+            padding: 5px 12px;
+            border: 3px solid black;
+            box-shadow: 3px 3px 0px black;
+            font-size: 0.9rem;
+            font-weight: 800;
+        }
+        .lives {
+            font-size: 1.2rem;
+        }
+        #game-container {
+            width: 100%;
+            max-width: 500px;
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            z-index: 100;
+        }
+        .hidden {
+            display: none !important;
+        }
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            color: var(--secondary);
+            margin-bottom: 20px;
+            -webkit-text-stroke: 1px black;
+        }
+        .btn {
+            width: 100%;
+            max-width: 280px;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 1.2rem;
+            font-weight: 800;
+            border: var(--border);
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: 0.1s;
+            font-family: 'Poppins', sans-serif;
+        }
+        .btn:active {
+            transform: translate(3px, 3px);
+            box-shadow: 2px 2px 0px black;
+        }
         .btn-purple { background: var(--primary); color: white; }
         .btn-yellow { background: var(--secondary); color: black; }
         .btn-outline { background: white; color: black; }
-        #controls { width: 100%; max-width: 500px; padding: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; background: rgba(0, 0, 0, 0.5); border-top: var(--border); }
-        .ans-btn { padding: 15px 5px; font-size: 1.4rem; font-weight: 800; border: var(--border); box-shadow: 4px 4px 0px black; background: white; color: black; cursor: pointer; }
-        .ans-btn.correct { background: var(--success) !important; color: white; }
-        .ans-btn.wrong { background: var(--danger) !important; color: white; }
-        .final-score-text { font-size: 3rem; color: var(--secondary); font-weight: 800; }
-        .stars-rating { font-size: 2.5rem; margin: 10px 0; }
+
+        #controls {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border-top: var(--border);
+        }
+        .ans-btn {
+            padding: 15px 5px;
+            font-size: 1.4rem;
+            font-weight: 800;
+            border: var(--border);
+            box-shadow: 4px 4px 0px black;
+            background: white;
+            color: black;
+            cursor: pointer;
+        }
+        .ans-btn.correct {
+            background: var(--success) !important;
+            color: white;
+        }
+        .ans-btn.wrong {
+            background: var(--danger) !important;
+            color: white;
+        }
+        .final-score-text {
+            font-size: 3rem;
+            color: var(--secondary);
+            font-weight: 800;
+        }
+        .stars-rating {
+            font-size: 2.5rem;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
     <div id="star-field" class="stars"></div>
+
     <header>
         <div class="stats-box">SKOR: <span id="score-val">0</span></div>
         <div id="lives-val" class="lives">❤️❤️❤️</div>
@@ -86,7 +220,7 @@
         let currentProblem = null;
         let meteor = { y: -100, x: 0, speed: 1.5, shape: [] };
         let lasers = [];
-        let timer = 10; // Increase initial time
+        let timer = 10; // initial time
         let timerInterval;
         let animationId;
 
@@ -169,7 +303,9 @@
                 if (!options.includes(w)) options.push(w);
             }
             options.sort(() => Math.random() - 0.5);
-            let text = (grade === 'SMA') ? (op === '√' ? "√" + a : (op === '²' ? a + "²" : op)) : (a + ' ' + op + ' ' + b);
+            let text = (grade === 'SMA')
+                ? (op === '√' ? "√" + a : (op === '²' ? a + "²" : op))
+                : (a + ' ' + op + ' ' + b);
             return { text, ans, options };
         }
 
@@ -187,30 +323,36 @@
         }
 
         function startGame() {
-            score = 0; lives = 3; gameActive = true;
+            score = 0;
+            lives = 3;
+            gameActive = true;
             document.getElementById('screen-result').classList.add('hidden');
             updateUI();
             newQuestion();
             gameLoop();
         }
 
+        // FIXED VERSION
         function newQuestion() {
             currentProblem = generateProblem();
             meteor.y = -60;
             meteor.x = canvas.width / 2;
             meteor.shape = [];
-            for(let i=0; i<10; i++) meteor.shape.push(0.8 + Math.random() * 0.4);
+            for (let i = 0; i < 10; i++) {
+                meteor.shape.push(0.8 + Math.random() * 0.4);
+            }
             lasers = [];
-    meteor.speed = 1.5 + (score / 80); // Faster difficulty scaling
+            meteor.speed = 1.5 + (score / 80); // Faster difficulty scaling
+
+            ansBtns.forEach((btn, i) => {
                 btn.innerText = currentProblem.options[i];
                 btn.className = 'ans-btn';
                 btn.disabled = false;
-                timer = 10; // Reset timer
-            });    ansBtns.forEach((btn, i) => {           clearInterval(timerInterval);
-                                                        btn.innerText = currentProblem.options[i];
-        btn.className = 'ans-btn';
-        btn.disabled = false;
-    });            timerInterval = setInterval(() => {
+            });
+
+            timer = 10; // Reset timer
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
                 if (!gameActive) return;
                 timer -= 0.1;
                 if (timer <= 0) wrongAnswer();
@@ -251,35 +393,44 @@
             gameActive = false;
             clearInterval(timerInterval);
             playBeep(150, 0.5, 'square');
+
             const key = 'hiScore_' + grade;
-            const hi = localStorage.getItem(key) || 0;
-            if (score > hi) localStorage.setItem(key, score);
-                hiEl.innerText = score; // Update high score display
+            const hi = parseInt(localStorage.getItem(key) || '0', 10);
+            if (score > hi) {
+                localStorage.setItem(key, score);
+                hiEl.innerText = score;
+            } else {
+                hiEl.innerText = hi;
+            }
+
             document.getElementById('screen-result').classList.remove('hidden');
             document.getElementById('res-score').innerText = score;
+
             let stars = "⭐";
             let msg = "Ayo belajar lagi!";
             if (score >= 100) { stars = "⭐⭐⭐"; msg = "Luar Biasa! Kamu jenius!"; }
             else if (score >= 50) { stars = "⭐⭐"; msg = "Hebat! Pertahankan!"; }
+
             document.getElementById('res-stars').innerText = stars;
             document.getElementById('res-msg').innerText = msg;
         }
 
         function gameLoop() {
             if (!gameActive) return;
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             meteor.y += meteor.speed;
 
-            // Draw Meteor (Rocky Visual)
+            // Meteor
             ctx.save();
             ctx.translate(meteor.x, meteor.y);
             ctx.fillStyle = '#6B7280';
             ctx.beginPath();
             meteor.shape.forEach((rMul, i) => {
-                let a = (i/meteor.shape.length)*Math.PI*2;
+                let a = (i / meteor.shape.length) * Math.PI * 2;
                 let r = 45 * rMul;
-                if (i === 0) ctx.moveTo(r*Math.cos(a), r*Math.sin(a));
-                else ctx.lineTo(r*Math.cos(a), r*Math.sin(a));
+                if (i === 0) ctx.moveTo(r * Math.cos(a), r * Math.sin(a));
+                else ctx.lineTo(r * Math.cos(a), r * Math.sin(a));
             });
             ctx.closePath();
             ctx.fill();
@@ -291,10 +442,11 @@
             ctx.fillStyle = 'rgba(0,0,0,0.2)';
             [{x:-15,y:-10,r:10}, {x:10,y:15,r:8}, {x:20,y:-5,r:6}].forEach(c => {
                 ctx.beginPath();
-                ctx.arc(c.x, c.y, c.r, 0, Math.PI*2);
+                ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
                 ctx.fill();
             });
 
+            // Soal
             ctx.fillStyle = 'white';
             ctx.font = 'bold 22px Poppins';
             ctx.textAlign = 'center';
@@ -317,6 +469,7 @@
                 ctx.moveTo(l.x, l.y);
                 ctx.lineTo(l.x, l.y - 20);
                 ctx.stroke();
+
                 if (l.y < meteor.y + 40) {
                     lasers.splice(i, 1);
                     score += 10;
