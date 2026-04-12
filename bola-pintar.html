@@ -28,7 +28,7 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background-color: #000;
+      background-color: #020617; /* fallback */
     }
 
     body {
@@ -38,14 +38,13 @@
       align-items: center;
     }
 
+    /* === LAYAR PENUH TANPA BELAHAN HITAM === */
     .app {
       width: 100%;
-      max-width: 640px;                 /* sedikit lebih wide */
-      height: min(100dvh, 900px);
-      aspect-ratio: 9 / 16;             /* standar lapangan vertikal */
-      margin-inline: auto;
+      height: 100dvh;
       position: relative;
-      background: linear-gradient(to bottom, #1e3a8a 0%, #3b82f6 40%, #0f172a 100%);
+      margin: 0;
+      background: radial-gradient(circle at 50% 0%, #1e3a8a 0%, #020617 55%, #0b1120 100%);
       overflow: hidden;
     }
 
@@ -104,7 +103,7 @@
       text-align: center;
       box-shadow: 0 10px 25px rgba(0,0,0,0.3);
       z-index: 20;
-      width: 82%;
+      width: min(82%, 640px);
     }
 
     .question-banner .small {
@@ -116,7 +115,7 @@
 
     .question-banner .big {
       font-family: 'Anton', sans-serif;
-      font-size: 2.1rem;
+      font-size: clamp(1.8rem, 4vw, 2.2rem);
       color: var(--ink);
       margin-top: 2px;
       line-height: 1;
@@ -170,7 +169,7 @@
       bottom: calc(30px + env(safe-area-inset-bottom));
       width: 100%;
       text-align: center;
-      color: rgba(255,255,255,0.8);
+      color: rgba(255,255,255,0.85);
       font-size: 0.9rem;
       font-weight: 700;
       pointer-events: none;
@@ -327,11 +326,11 @@
     let animationId;
     let currentProblem = null;
 
-    // 3D Perspective state
+    // Hoops
     let hoops = [];
     const HOOP_Y_RATIO = 0.38;
 
-    // Ball state
+    // Ball
     let ball = {
       x: 0,
       y: 0,
@@ -345,9 +344,9 @@
 
     // Swipe + projection
     let swipeStart = null;
-    let aimLine = null; // {startX,startY,endX,endY,alpha}
+    let aimLine = null;
 
-    // Partikel + audio
+    // Particles + audio
     let particles = [];
     let audioCtx = null;
 
@@ -449,7 +448,7 @@
 
     function startTimer() {
       clearInterval(timeInterval);
-      timeLeft = Math.max(4, 8 - (level - 1)); // makin tinggi level, waktu makin pendek (min 4)
+      timeLeft = Math.max(4, 8 - (level - 1));
       document.getElementById('timeVal').innerText = timeLeft;
 
       timeInterval = setInterval(() => {
@@ -458,11 +457,10 @@
         document.getElementById('timeVal').innerText = Math.max(0, timeLeft);
         if (timeLeft <= 0) {
           clearInterval(timeInterval);
-          // auto salah kalau belum menembak
           if (ball.phase === 'ready') {
             const correct = hoops.find(h => h.isCorrect);
             ball.targetHoop = correct;
-            ball.phase = 'in-hoop';   // treat sebagai miss (kita paksa salah)
+            ball.phase = 'in-hoop';
             ball.progress = 0;
             processHit({ ...correct, isCorrect: false });
           }
@@ -559,13 +557,13 @@
 
     // DRAWING
     function draw3DCourt() {
-      ctx.fillStyle = '#0f172a';
+      ctx.fillStyle = '#020617';
       ctx.fillRect(0, 0, width, height);
 
       const horizonY = height * 0.45;
+      const floorColor = level >= 4 ? '#b45309' : '#c2410c';
 
       // Floor
-      const floorColor = level >= 4 ? '#b45309' : '#c2410c';
       ctx.fillStyle = floorColor;
       ctx.beginPath();
       ctx.moveTo(0, horizonY);
@@ -718,7 +716,6 @@
     function loop() {
       if (!gameActive) { animationId = null; return; }
 
-      // update ball phase
       if (ball.phase === 'flying') {
         ball.progress += 0.03;
         if (ball.progress >= 1) {
@@ -764,7 +761,7 @@
       animationId = requestAnimationFrame(loop);
     }
 
-    // INPUT HANDLING
+    // INPUT
     function getPointerPos(e) {
       const touch = e.touches ? e.touches[0] : e;
       return { x: touch.clientX, y: touch.clientY };
