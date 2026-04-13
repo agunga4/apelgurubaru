@@ -199,7 +199,7 @@
             margin-top: 100px; 
         }
         .bg-yellow { background: var(--yellow) !important; }
-        .bg-green { background: var(--green) !important; }
+        .bg-green: { background: var(--green) !important; }
         .bg-blue { background: var(--blue) !important; }
         .bg-orange { background: var(--orange) !important; }
         .bg-purple { background: var(--purple) !important; }
@@ -217,7 +217,7 @@
 <body>
     <header id="main-header">
         <div class="logo"><h1>APeL</h1></div>
-        <p class="tagline">Aplikasi Pembelajaran Lengkap</p>
+        <p class="tagline">Media Belajar Kreatif & Interaktif</p>
     </header>
 
 
@@ -225,18 +225,18 @@
         <div class="nav-card neo-box bg-yellow" onclick="showSection('games')">
             <span>🎮</span><span>GAME EDUKASI</span>
         </div>
-        <div class="nav-card neo-box bg-green" onclick="showSection('perencanaan')">
-            <span>📚</span><span>PERENCANAAN PEMBELAJARAN</span>
+        <div class="nav-card neo-box bg-green" onclick="showSection('modul')">
+            <span>📚</span><span>MODUL AJAR</span>
         </div>
         <div class="nav-card neo-box bg-blue" onclick="showSection('lkpd')">
-            <span>📝</span><span>LKPD</span>
+            <span>📝</span><span>LKPD INTERAKTIF</span>
         </div>
-        <div class="nav-card neo-box bg-orange" onclick="showSection('materi')">
+        <a class="nav-card neo-box bg-orange" href="https://apel-media-belajar.vercel.app/" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
             <span>📖</span><span>MATERI BELAJAR</span>
-        </div>
-      <a class="nav-card neo-box bg-purple" href="https://apel-profilsiswa.vercel.app" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
-  <span>📋</span><span>ADMINISTRASI PERKEMBANGAN SISWA</span>
-</a>
+        </a>
+        <a class="nav-card neo-box bg-purple" href="https://apel-profilsiswa.vercel.app" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
+            <span>📋</span><span>ADMINISTRASI</span>
+        </a>
         <div class="nav-card neo-box bg-pink" onclick="showSection('pengembangan')">
             <span>🎓</span><span>PENGEMBANGAN GURU</span>
         </div>
@@ -307,13 +307,28 @@
     </div>
 
 
-    <!-- PERENCANAAN PEMBELAJARAN SECTION (replaces MODUL AJAR) -->
-    <div id="perencanaan" class="page-section">
+    <!-- MODUL AJAR SECTION -->
+    <div id="modul" class="page-section">
         <div class="btn-back" onclick="showDashboard()">⬅ KEMBALI KE BERANDA</div>
-        <div class="section-header"><div class="title-box">PERENCANAAN PEMBELAJARAN</div></div>
+        <div class="section-header"><div class="title-box">MODUL AJAR</div></div>
         <div class="content-grid">
             <div class="item-card neo-box">
-                <p style="text-align:center; font-size:1.2rem; color:#444;">Masih dalam Tahap Pengembangan</p>
+                <div class="game-emoji">📘</div>
+                <h3>Fase A (Kelas 1-2)</h3>
+                <p>Kumpulan modul ajar Kurikulum Merdeka untuk jenjang awal SD.</p>
+                <a href="#" class="btn-play">LIHAT DAFTAR</a>
+            </div>
+            <div class="item-card neo-box">
+                <div class="game-emoji">📗</div>
+                <h3>Fase B (Kelas 3-4)</h3>
+                <p>Modul ajar inovatif untuk kelas 3 dan 4 SD.</p>
+                <a href="#" class="btn-play">LIHAT DAFTAR</a>
+            </div>
+            <div class="item-card neo-box">
+                <div class="game-emoji">📙</div>
+                <h3>Fase C (Kelas 5-6)</h3>
+                <p>Materi pembelajaran lengkap untuk persiapan ujian sekolah.</p>
+                <a href="#" class="btn-play">LIHAT DAFTAR</a>
             </div>
         </div>
     </div>
@@ -322,10 +337,19 @@
     <!-- LKPD SECTION -->
     <div id="lkpd" class="page-section">
         <div class="btn-back" onclick="showDashboard()">⬅ KEMBALI KE BERANDA</div>
-        <div class="section-header"><div class="title-box">LKPD</div></div>
+        <div class="section-header"><div class="title-box">LKPD INTERAKTIF</div></div>
         <div class="content-grid">
             <div class="item-card neo-box">
-                <p style="text-align:center; font-size:1.2rem; color:#444;">Masih dalam Tahap Pengembangan</p>
+                <div class="game-emoji">✍️</div>
+                <h3>Literasi Bahasa</h3>
+                <p>Lembar kerja membaca dan menulis yang menyenangkan.</p>
+                <a href="#" class="btn-play">KERJAKAN</a>
+            </div>
+            <div class="item-card neo-box">
+                <div class="game-emoji">🔢</div>
+                <h3>Numerasi Cepat</h3>
+                <p>Latihan berhitung dengan metode visual menarik.</p>
+                <a href="#" class="btn-play">KERJAKAN</a>
             </div>
         </div>
     </div>
@@ -337,16 +361,25 @@
         <div class="section-header"><div class="title-box">MATERI BELAJAR</div></div>
         <div class="content-grid">
             <div class="item-card neo-box">
-                <p style="text-align:center; font-size:1.2rem; color:#444;">Masih dalam Tahap Pengembangan</p>
+                <div class="game-emoji">🎬</div>
+                <h3>Video Pembelajaran</h3>
+                <p>Animasi materi IPA, IPS, and Matematika.</p>
+                <a href="#" class="btn-play">TONTON</a>
+            </div>
+            <div class="item-card neo-box">
+                <div class="game-emoji">📊</div>
+                <h3>Slide Presentasi</h3>
+                <p>Materi dalam format PPT yang siap digunakan di kelas.</p>
+                <a href="#" class="btn-play">UNDUH</a>
             </div>
         </div>
     </div>
 
 
-    <!-- ADMINISTRASI PERKEMBANGAN SISWA SECTION (original content retained, only title changed) -->
+    <!-- ADMINISTRASI SECTION -->
     <div id="administrasi" class="page-section">
         <div class="btn-back" onclick="showDashboard()">⬅ KEMBALI KE BERANDA</div>
-        <div class="section-header"><div class="title-box">ADMINISTRASI PERKEMBANGAN SISWA</div></div>
+        <div class="section-header"><div class="title-box">ADMINISTRASI GURU</div></div>
         <div class="content-grid">
             <div class="item-card neo-box">
                 <div class="game-emoji">👤</div>
@@ -395,16 +428,39 @@
     <div id="pengembangan" class="page-section">
         <div class="btn-back" onclick="showDashboard()">⬅ KEMBALI KE BERANDA</div>
         <div class="section-header"><div class="title-box">PENGEMBANGAN GURU</div></div>
+        
+        <div class="hero-banner">
+            <div class="hero-emoji">🎓</div>
+            <h2>TERUS BELAJAR, TERUS MENGINSPIRASI!</h2>
+            <p>"Pendidikan adalah senjata paling mematikan di dunia, karena dengan itu Anda bisa mengubah dunia." — Nelson Mandela</p>
+        </div>
+
+
         <div class="content-grid">
             <div class="item-card neo-box">
-                <p style="text-align:center; font-size:1.2rem; color:#444;">Masih dalam Tahap Pengembangan</p>
+                <div class="game-emoji">📂</div>
+                <h3>Perangkat Siap Pakai</h3>
+                <p>Kumpulan contoh Modul Ajar dan RPP terbaik dari guru-guru hebat.</p>
+                <a href="#" class="btn-play">UNDUH</a>
+            </div>
+            <div class="item-card neo-box">
+                <div class="game-emoji">💡</div>
+                <h3>Ide Praktik Baik</h3>
+                <p>Inspirasi metode mengajar kreatif dan inovatif yang berhasil.</p>
+                <a href="#" class="btn-play">BACA</a>
+            </div>
+            <div class="item-card neo-box">
+                <div class="game-emoji">📺</div>
+                <h3>Pelatihan Mini</h3>
+                <p>Video tutorial singkat penggunaan teknologi dalam pembelajaran.</p>
+                <a href="#" class="btn-play">IKUTI</a>
             </div>
         </div>
     </div>
 
 
     <footer>
-        <p>© 2026 APeL - Aplikasi Pembelajaran Lengkap</p>
+        <p>© 2024 APeL - Aplikasi Pembelajaran Lengkap</p>
         <p>Dikembangkan oleh Agung Aljabari, M.Pd.</p>
     </footer>
 
